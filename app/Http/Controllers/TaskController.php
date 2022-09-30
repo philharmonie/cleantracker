@@ -12,8 +12,16 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $sort = $request->query('sort');
+        if ($sort) {
+            if ($sort == 'latest') {
+                return view('tasks.index', [
+                    'tasks' => Task::orderBy('created_at', 'DESC')->simplePaginate(10)
+                ]);
+            }
+        }
         return view('tasks.index', [
             'tasks' => Task::orderBy('date', 'DESC')->simplePaginate(10)
         ]);

@@ -1,8 +1,8 @@
 <x-app-layout>
 
-    <div class="p-8 flex items-center justify-between bg-white shadow-xl rounded-xl mb-8">
+    <div class="flex items-center justify-between p-8 mb-8 bg-white shadow-xl rounded-xl">
 
-        <div class="bg-red-800 text-white rounded-full p-2 w-12 h-12 grid place-content-center font-bold">
+        <div class="grid w-12 h-12 p-2 font-bold text-white bg-red-800 rounded-full place-content-center">
             {{ Str::substr(auth()->user()->name, 0, 1) }}
         </div>
 
@@ -10,37 +10,37 @@
             {{ auth()->user()->points }} : {{ auth()->user()->partner->points }}
         </div>
 
-        <div class="bg-red-800 text-white rounded-full p-2 w-12 h-12 grid place-content-center font-bold">
+        <div class="grid w-12 h-12 p-2 font-bold text-white bg-red-800 rounded-full place-content-center">
             {{ Str::substr(auth()->user()->partner->name, 0, 1) }}
         </div>
 
     </div>
 
-    <form method="post" action="{{ Route('tasks.store') }}" class="p-8 bg-white shadow-xl rounded-xl mb-8">
+    <form method="post" action="{{ Route('tasks.store') }}" class="p-8 mb-8 bg-white shadow-xl rounded-xl">
         @csrf
         @error('task')
-            <div class="text-red-500 text-sm">Bitte eine Aufgabe angeben</div>
+            <div class="text-sm text-red-500">Bitte eine Aufgabe angeben</div>
         @enderror
         <livewire:input-search />
-        <div class="mt-4 flex items-center justify-between">
+        <div class="flex items-center justify-between mt-4">
             <label class="cursor-pointer">
                 <input type="radio" name="points" value="1" class="hidden peer" checked>
                 <div
-                    class="bg-gray-200 text-gray-400 px-8 py-2 rounded peer-checked:bg-red-800 peer-checked:text-white peer-checked:font-bold">
+                    class="px-8 py-2 text-gray-400 bg-gray-200 rounded peer-checked:bg-red-800 peer-checked:text-white peer-checked:font-bold">
                     1
                 </div>
             </label>
             <label class="cursor-pointer">
                 <input type="radio" name="points" value="2" class="hidden peer">
                 <div
-                    class="bg-gray-200 text-gray-400 px-8 py-2 rounded peer-checked:bg-red-800 peer-checked:text-white peer-checked:font-bold">
+                    class="px-8 py-2 text-gray-400 bg-gray-200 rounded peer-checked:bg-red-800 peer-checked:text-white peer-checked:font-bold">
                     2
                 </div>
             </label>
             <label class="cursor-pointer">
                 <input type="radio" name="points" value="3" class="hidden peer">
                 <div
-                    class="bg-gray-200 text-gray-400 px-8 py-2 rounded peer-checked:bg-red-800 peer-checked:text-white peer-checked:font-bold">
+                    class="px-8 py-2 text-gray-400 bg-gray-200 rounded peer-checked:bg-red-800 peer-checked:text-white peer-checked:font-bold">
                     3
                 </div>
             </label>
@@ -52,10 +52,10 @@
             <link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" />
         @endpush
         @error('date')
-            <div class="text-red-500 text-sm mt-2 relative -bottom-4">Bitte ein Datum wählen</div>
+            <div class="relative mt-2 text-sm text-red-500 -bottom-4">Bitte ein Datum wählen</div>
         @enderror
         <div class="relative mt-4">
-            <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor"
                     viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd"
@@ -64,20 +64,28 @@
                 </svg>
             </div>
             <input datepicker datepicker-autohide datepicker-format="dd.mm.yyyy" type="text" name="date"
-                class="bg-gray-100 border text-center border-none sm:text-sm rounded-lg block w-full pl-10 p-4"
+                class="block w-full p-4 pl-10 text-center bg-gray-100 border border-none rounded-lg sm:text-sm"
                 placeholder="Datum wählen" value="{{ now()->format('d.m.Y') }}">
         </div>
         <button type="submit"
-            class="mt-4 w-full bg-red-800 text-white rounded-md p-4 hover:bg-red-700 font-semibold tracking-wide">+
+            class="w-full p-4 mt-4 font-semibold tracking-wide text-white bg-red-800 rounded-md hover:bg-red-700">+
             Hinzufügen</button>
     </form>
 
+    <div class="flex justify-end pr-4 mb-8 text-gray-500">
+        <div>
+            Sortieren nach: <a href="{{ Route('tasks.index', ['sort' => 'date']) }}"
+                class="font-bold text-red-800">Datum</a> | <a href="{{ Route('tasks.index', ['sort' => 'latest']) }}"
+                class="font-bold text-red-800">Neuste</a>
+        </div>
+    </div>
+
     @forelse ($tasks as $task)
-        <div class="shadow-xl rounded-xl mb-8 flex justify-between items-stretch">
-            <div class="flex items-center justify-between bg-white p-4 rounded-l-xl w-full">
+        <div class="flex items-stretch justify-between mb-8 shadow-xl rounded-xl">
+            <div class="flex items-center justify-between w-full p-4 bg-white rounded-l-xl">
                 <div class="flex items-center">
                     <div
-                        class="bg-red-800 text-white rounded-full p-2 w-8 h-8 grid place-content-center mr-2 font-bold">
+                        class="grid w-8 h-8 p-2 mr-2 font-bold text-white bg-red-800 rounded-full place-content-center">
                         {{ Str::substr($task->user->name, 0, 1) }}
                     </div>
                     <div class="font-bold">
@@ -89,17 +97,10 @@
                 </div>
 
             </div>
-            <div class="bg-red-800 p-2 rounded-r-xl text-white font-bold flex-1 grid place-content-center">
+            <div class="grid flex-1 p-2 font-bold text-white bg-red-800 rounded-r-xl place-content-center">
                 +{{ $task->points }}
             </div>
         </div>
-
-        {{-- if the date changes to a new week, add a divider with calender week --}}
-        @if ($loop->last || $task->date->format('W') !== $tasks[$loop->index + 1]->date->format('W'))
-            <div class="text-center text-gray-500 mb-4">
-                Kalenderwoche {{ $task->date->weekOfYear - 1 }}
-            </div>
-        @endif
 
     @empty
         Keine Aufgaben vorhanden.
