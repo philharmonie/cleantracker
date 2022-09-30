@@ -5,3 +5,4 @@ services:
       context: ./
     volumes:
       - .:/var/www/html
+    container_name: cleantracker

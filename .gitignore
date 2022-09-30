@@ -18,3 +18,4 @@ yarn-error.log
 /database/database.sqlite
 backup.json
 .env.prod
+docker-compose.override.yml

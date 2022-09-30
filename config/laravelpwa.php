@@ -14,7 +14,7 @@ $data = [
         'short_name' => 'Clean',
         'start_url' => '/',
         'background_color' => '#F3F4F6',
-        'theme_color' => '#9B1C1C',
+        'theme_color' => '#F3F4F6',
         'display' => 'standalone',
         'orientation' => 'any',
         'status_bar' => '#F3F4F6',
@@ -24,7 +24,8 @@ $data = [
                 'purpose' => 'any'
             ],
         ],
-        'splash' => $splash_icons
+        'splash' => $splash_icons,
+	'custom' => []
     ]
 ];
 
