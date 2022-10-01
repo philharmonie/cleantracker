@@ -14,16 +14,38 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        $data = Task::where('user_id', auth()->user()->id)
+            ->orWhere('user_id', auth()->user()->partner_id)
+            ->orderBy('date', 'DESC')
+            ->get()
+            ->groupBy('date')
+            ->take(30)
+            ->map(function ($item, $key) {
+                $user_points = $item->where('user_id', auth()->user()->id)->sum('points');
+                $partner_points = $item->where('user_id', auth()->user()->partner_id)->sum('points');
+                return $user_points - $partner_points;
+            })->values();
+
+        $sum = 0;
+        foreach ($data as $value) {
+            $sum += $value;
+        }
+        $average = $sum / count($data);
+
         $sort = $request->query('sort');
         if ($sort) {
             if ($sort == 'latest') {
                 return view('tasks.index', [
-                    'tasks' => Task::orderBy('created_at', 'DESC')->simplePaginate(10)
+                    'tasks' => Task::orderBy('created_at', 'DESC')->simplePaginate(10),
+                    'data' => $data,
+                    'avg' => $average,
                 ]);
             }
         }
         return view('tasks.index', [
-            'tasks' => Task::orderBy('date', 'DESC')->simplePaginate(10)
+            'tasks' => Task::orderBy('date', 'DESC')->simplePaginate(10),
+            'data' => $data,
+            'avg' => $average,
         ]);
     }
 

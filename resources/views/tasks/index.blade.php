@@ -9,19 +9,107 @@
 
     </a>
 
-    <div class="flex items-center justify-between p-8 mb-8 bg-white shadow-xl rounded-xl">
+    <div class="relative mb-8 bg-white shadow-xl rounded-xl">
 
-        <div class="grid w-12 h-12 p-2 font-bold text-white bg-red-800 rounded-full place-content-center">
-            {{ Str::substr(auth()->user()->name, 0, 1) }}
+        <div class="relative z-20 flex items-center justify-between p-8">
+            <div class="grid w-12 h-12 p-2 font-bold text-white bg-red-800 rounded-full place-content-center">
+                {{ Str::substr(auth()->user()->name, 0, 1) }}
+            </div>
+
+            <div class="text-2xl font-bold">
+                {{ auth()->user()->points }} : {{ auth()->user()->partner->points }}
+            </div>
+
+            <div class="grid w-12 h-12 p-2 font-bold text-white bg-red-800 rounded-full place-content-center">
+                {{ Str::substr(auth()->user()->partner->name, 0, 1) }}
+            </div>
         </div>
 
-        <div class="text-2xl font-bold">
-            {{ auth()->user()->points }} : {{ auth()->user()->partner->points }}
-        </div>
+        <canvas id="myChart" class="absolute top-0 left-0 z-10 w-full opacity-10" height="112"></canvas>
+        @push('scripts')
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.1/dist/chartjs-plugin-annotation.min.js">
+            </script>
+            <script>
+                const chart = new Chart(document.getElementById('myChart'), {
+                    data: {
+                        datasets: [{
+                                type: 'line',
+                                data: [
+                                    @foreach ($data as $d)
+                                        {{ round($d, 0) }},
+                                    @endforeach
+                                ],
+                                lineTension: .3,
+                                borderColor: '#9B1C1C',
+                                borderWidth: 4,
+                            },
+                            {
+                                type: 'line',
+                                data: {{ $avg }},
+                                lineTension: .3,
+                                borderColor: '#000',
+                                borderWidth: 4,
+                            }
+                        ],
+                        labels: [
+                            @foreach ($data as $d)
+                                "",
+                            @endforeach
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            annotation: {
+                                annotations: {
 
-        <div class="grid w-12 h-12 p-2 font-bold text-white bg-red-800 rounded-full place-content-center">
-            {{ Str::substr(auth()->user()->partner->name, 0, 1) }}
-        </div>
+                                    ano1: {
+                                        type: 'line',
+                                        borderColor: '#9B1C1C',
+                                        borderDash: [6, 6],
+                                        borderDashOffset: 0,
+                                        borderWidth: 1,
+                                        label: {
+                                            enabled: false
+                                        },
+                                        scaleID: 'y',
+                                        value: {{ $avg }},
+
+                                    },
+                                    ano2: {
+                                        type: 'line',
+                                        borderColor: 'black',
+                                        borderWidth: 1,
+                                        label: {
+                                            enabled: false
+                                        },
+                                        scaleID: 'y',
+                                        value: 0,
+                                    },
+
+                                }
+                            },
+                            legend: {
+                                display: false,
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 0
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: false,
+                            },
+                            y: {
+                                display: false
+                            },
+                        },
+                    }
+                })
+            </script>
+        @endpush
 
     </div>
 
