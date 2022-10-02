@@ -3,6 +3,15 @@ services:
   app:
     build:
       context: ./
+      args:
+        WWWGROUP: '${WWWGROUP}'
     volumes:
-      - .:/var/www/html
+      - ./database/database.sqlite:/var/www/database/database.sqlite
+    environment:
+      WWWUSER: '${WWWUSER}'
     container_name: cleantracker
+    networks:
+      - cleantracker
+networks:
+  cleantracker:
+    driver: bridge

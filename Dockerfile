@@ -1,31 +1,47 @@
+##########################
+# COMPOSER
+##########################
 FROM composer:latest as build
+
 COPY . /app/
+
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
+##########################
+# PHP, NGINX, SUPERVISOR
+##########################
 FROM php:8.1-fpm-alpine as production
 
+ARG WWWGROUP
+
+WORKDIR /var/www
+
+ENV TZ=UTC
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN apk update && apk add \
     nginx \
-    supervisor
+    supervisor \
+    shadow
 RUN rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
 
 RUN docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install pdo pdo_mysql
-COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+RUN addgroup -g $WWWGROUP clean && \
+    adduser -u 1337 -G clean --disabled-password --no-create-home clean
 
 COPY --from=build /app /var/www
 COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord/supervisord.conf /etc/supervisord.conf
+COPY docker/start-container /usr/local/bin/start-container
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 COPY .env.prod /var/www/.env
 
-WORKDIR /var/www
+RUN chmod +x /usr/local/bin/start-container
 
-RUN chmod 777 -R /var/www/storage/ && \
-    chown -R www-data:www-data /var/www/ && \
-    chmod +x /var/www/docker/run.sh
-
-ENTRYPOINT ["/var/www/docker/run.sh"]
+ENTRYPOINT ["start-container"]

@@ -20,6 +20,7 @@ class TaskController extends Controller
             ->get()
             ->groupBy('date')
             ->take(30)
+	    ->reverse()
             ->map(function ($item, $key) {
                 $user_points = $item->where('user_id', auth()->user()->id)->sum('points');
                 $partner_points = $item->where('user_id', auth()->user()->partner_id)->sum('points');

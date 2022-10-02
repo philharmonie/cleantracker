@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#if [ ! -z "$WWWUSER" ]; then
+#    usermod -u $WWWUSER clean
+#fi
+#
+#if [ ! -z "$WWWGROUP" ]; then
+#    groupmod -g $WWWGROUP www-data
+#fi
+
+cd /var/www
+
+php artisan cache:clear
+php artisan route:cache
+
+chown -R clean:www-data /var/www
+
+/usr/bin/supervisord -c /etc/supervisord.conf
