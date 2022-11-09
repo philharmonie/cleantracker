@@ -187,7 +187,17 @@
                             {{ Str::substr($task->user->name, 0, 1) }}
                         </div>
                         <div class="font-bold">
-                            {{ $task->name }}
+                            {{ $task->name }}<br>
+                            <span class="text-xs font-light">
+                                @php
+                                    $own = $task->count_of_tasks_with_same_name_for_user(auth()->user()->id);
+                                    $partner = $task->count_of_tasks_with_same_name_for_user(auth()->user()->partner->id);
+                                    $result = abs($own - $partner);
+                                    
+                                @endphp
+                                {{ $result }}x {{ $own > $partner ? 'mehr' : 'weniger' }}
+                                ({{ $own }} : {{ $partner }})
+                            </span>
                         </div>
                     </div>
                     <div>

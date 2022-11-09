@@ -26,4 +26,9 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function count_of_tasks_with_same_name_for_user($id)
+    {
+        return Task::where('user_id', $id)->where('name', $this->name)->count();
+    }
 }
